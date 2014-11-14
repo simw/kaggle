@@ -1,0 +1,9 @@
+*.swp
+*.swo
+*.pyc
+
+*.class
+
+out/
+
+.ipynb_checkpoints/
