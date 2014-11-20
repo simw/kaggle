@@ -7,3 +7,5 @@
 out/
 
 .ipynb_checkpoints/
+
+digit-recognizer/data/
