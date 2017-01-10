@@ -1,0 +1,69 @@
+---
+title: "Titanic"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(dplyr)
+library(readr)
+library(tidyr)
+library(modelr)
+library(purrr)
+library(tibble)
+library(ggplot2)
+```
+
+# Data import
+
+```{r}
+cols <- c(
+  PassengerId = col_integer(),
+  Survived = col_integer(),
+  Pclass = col_integer(),
+  Name = col_character(),
+  Sex = col_character(),
+  Age = col_double(),
+  SibSp = col_integer(),
+  Parch = col_integer(),
+  Ticket = col_character(),
+  Fare = col_double(),
+  Cabin = col_character(),
+  Embarked = col_character()
+)
+train <- read_csv('~/Code/data/kaggle/titanic_train.csv', col_types = cols)
+train$CabinType <- stringr::str_sub(train$Cabin, 1, 1)
+print(nrow(train))
+
+map_df(colnames(train), function(col) {
+  dat <- train[[col]]
+  result <- list(
+    name = col,
+    type = class(dat),
+    uniques = length(unique(dat))
+  )
+  return(result)
+})
+print(colnames(train))
+```
+
+```{r}
+discreteCols <- c('Survived', 'Pclass', 'Sex', 'SibSp', 'Parch', 'Embarked')
+
+walk(discreteCols, function(col) {
+  g <- ggplot(train, aes_string(x = col, y = '1 / nrow(train)')) + 
+    geom_bar(stat = 'identity')
+  print(g)
+})
+```
+
+```{r}
+continuousCols <- c('Age', 'Fare')
+
+walk(continuousCols, function(col) {
+  g <- ggplot(train, aes_string(x = col)) + 
+    geom_histogram(bins = 30)
+  print(g)
+})
+```
